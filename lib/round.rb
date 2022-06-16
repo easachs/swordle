@@ -1,22 +1,26 @@
 class Round
 
   def initialize
-    @word = Word.new.sample.upcase
+    @word = Word.new.sample
     @guess = nil
     @correct = false
+    @round_count = 1
+    @alphabet = ('A'..'Z').to_a
+    @present = []
+    @absent = []
   end
 
   def start
-    puts "Welcome to Swordle.\nEnter p to play or q to quit."
+    puts "Welcome to SWORDLE."
     welcome
   end
 
   def welcome
+    puts "Enter p to play or q to quit."
     welcome_input = gets.chomp.downcase
     if welcome_input[0] == "q"
-      puts "Goodbye."
+      puts "Ciao!"
     elsif welcome_input[0] == "p"
-      puts "A random six-letter word has been selected."
       game
     else
       puts "Invalid input."
@@ -25,37 +29,103 @@ class Round
   end
 
   def game
-    round_count = 0
-    until @correct || round_count >= 6 do
-      round
-      round_count += 1
+    reset
+    puts "A random six letter word has been selected."
+    until @correct || @round_count > 6 do
+      round_start
     end
     if !@correct
-      puts "You lose, the correct word was #{@word}."
+      puts "You're pathetic! The correct word was #{@word}."
+      welcome
     end
   end
 
-  def round
-    puts "Enter your guess."
-    @guess = gets.chomp.strip.upcase
+  def round_start
+    puts "Round #{@round_count}\nAlphabet: #{@alphabet.sort.uniq.join}"
+    puts "Present: #{@present.sort.uniq.join} / Absent: #{@absent.uniq.join.downcase}\nEnter your guess."
+    @round_count += 1
+    enter_guess
+  end
+
+  def enter_guess
+    @guess = gets.upcase.chars.delete_if do |ch|
+      !('A'..'Z').to_a.include?(ch)
+    end.join[0..5]
     if @guess == @word
       @correct = true
+      display
       puts "You win!"
-    elsif @guess.length != 6
+      welcome
+    elsif @guess.length < 6
       puts "Guess must be six letters."
-      round
+      enter_guess
+    elsif !Word.new.words.include?(@guess.downcase)
+      puts "Invalid word. Guess again."
+      enter_guess
     else
-      count = 0
-      6.times do
-        if @word.chars[count] == @guess.chars[count]
-          puts "[#{@guess[count]}] [#{@word[count]}] Letter ##{count + 1} is CORRECT."
-        elsif @word.include?(@guess.chars[count])
-          puts "[#{@guess.chars[count]}] [!] Letter ##{count + 1} is MISPLACED."
-        else
-          puts "[#{@guess.chars[count]}] [ ] Letter ##{count + 1} is ABSENT."
-        end
-        count += 1
-      end
+      display
     end
   end
+
+  def display
+    puts guess_display
+    puts word_display
+  end
+
+  def guess_display
+    guess_render = "\n "
+    @guess.chars.each { |ch| guess_render.concat("#{ch} ") }
+    guess_render
+  end
+
+  def word_display
+    count = 0
+    word_render = " "
+    @guess.chars.each do |ch|
+      if @word.chars[count] == ch
+        word_render.concat("#{ch} ")
+        @present << ch
+      elsif @word.include?(ch)
+        word_render.concat("! ")
+        @present << ch
+      else
+        word_render.concat(". ")
+        @absent << ch
+      end
+      @alphabet.delete(ch)
+      count += 1
+    end
+    word_render.concat("\n ")
+  end
+
+  def reset
+    @word = Word.new.sample
+    @guess = nil
+    @correct = false
+    @round_count = 1
+    @alphabet = ('A'..'Z').to_a
+    @present = []
+    @absent = []
+  end
+
+  # def display
+  #   count = 0
+  #   6.times do
+  #     guess_char = @guess.chars[count]
+  #     if @word.chars[count] == guess_char
+  #       puts "[#{@guess[count]}] [#{@word[count]}] Letter #{count + 1} is CORRECT"
+  #       @present << guess_char unless @present.include?(guess_char)
+  #       @alphabet.delete(guess_char)
+  #     elsif @word.include?(guess_char)
+  #       puts "[#{guess_char}] [!] Letter #{count + 1} is MISPLACED"
+  #       @present << guess_char unless @present.include?(guess_char)
+  #       @alphabet.delete(guess_char)
+  #     else
+  #       puts "[#{guess_char}] [ ] Letter #{count + 1} is ABSENT"
+  #       @absent << guess_char unless @absent.include?(guess_char)
+  #       @alphabet.delete(guess_char)
+  #     end
+  #     count += 1
+  #   end
+  # end
 end
