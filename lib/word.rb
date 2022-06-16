@@ -1,5 +1,7 @@
 class Word
 
+  attr_reader :words
+
   def initialize
     @words = ["abroad",
     "accept",
@@ -504,7 +506,7 @@ class Word
   end
 
   def sample
-    @words.sample
+    @words.sample.upcase
   end
 
 end
