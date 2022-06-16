@@ -107,25 +107,4 @@ class Round
     @present = []
     @absent = []
   end
-
-  # def display
-  #   count = 0
-  #   6.times do
-  #     guess_char = @guess.chars[count]
-  #     if @word.chars[count] == guess_char
-  #       puts "[#{@guess[count]}] [#{@word[count]}] Letter #{count + 1} is CORRECT"
-  #       @present << guess_char unless @present.include?(guess_char)
-  #       @alphabet.delete(guess_char)
-  #     elsif @word.include?(guess_char)
-  #       puts "[#{guess_char}] [!] Letter #{count + 1} is MISPLACED"
-  #       @present << guess_char unless @present.include?(guess_char)
-  #       @alphabet.delete(guess_char)
-  #     else
-  #       puts "[#{guess_char}] [ ] Letter #{count + 1} is ABSENT"
-  #       @absent << guess_char unless @absent.include?(guess_char)
-  #       @alphabet.delete(guess_char)
-  #     end
-  #     count += 1
-  #   end
-  # end
 end
