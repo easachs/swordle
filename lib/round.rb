@@ -31,13 +31,9 @@ class Round
   def game
     reset
     puts "A random six letter word has been selected."
-    until @correct || @round_count > 6 do
-      round_start
-    end
-    if !@correct
-      puts "You're pathetic! The correct word was #{@word}."
-      welcome
-    end
+    round_start until @correct || @round_count > 6
+    puts "You're pathetic! The correct word was #{@word}." if !@correct
+    welcome
   end
 
   def round_start
@@ -55,7 +51,6 @@ class Round
       @correct = true
       display
       puts "You win!"
-      welcome
     elsif @guess.length < 6
       puts "Guess must be six letters."
       enter_guess
